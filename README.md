@@ -12,7 +12,7 @@
 * [SPACE] => keybinding for lisp editing
 * [,] => keybinding for Clojure (currently only cider-jack-in
 * [TAB] => other keybinding (windows, projectile, magit, etc)
-* M-x => [SPACE][SPACE]
+* [SPACE][SPACE] => M-x
 * [s] & [S] => slurp
 * [B] & [C] => barf
 
