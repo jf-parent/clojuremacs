@@ -33,16 +33,16 @@
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
-     (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-    (bootstrap-version 5))
-(unless (file-exists-p bootstrap-file)
-  (with-current-buffer
-      (url-retrieve-synchronously
-       "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-       'silent 'inhibit-cookies)
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
-(load bootstrap-file nil 'nomessage))
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
 ;;(use-package auto-package-update
 ;;  :defer 10
@@ -74,19 +74,20 @@
   :ensure t)
 ;; Smartparens
 (use-package smartparens)
+(use-package clj-refactor
+ :init (clj-refactor-mode 1) (yas-minor-mode 1))
 
 (use-package all-the-icons)
 
 (use-package shelldon
-:straight (shelldon :type git
-                    :host github
-                    :repo "Overdr0ne/shelldon"
-                    :branch "master"))
+  :straight (shelldon :type git
+                      :host github
+                      :repo "Overdr0ne/shelldon"
+                      :branch "master"))
 
 (use-package projectile
   :ensure t
-  :init
-  (projectile-mode +1))
+  :init (projectile-mode +1))
 
 (use-package helm
   :config
@@ -99,8 +100,8 @@
 
 ;; TODO fold python,clojure by default
 (use-package origami
- :init
- (add-hook 'prog-mode-hook #'origami-mode))
+  :init
+  (add-hook 'prog-mode-hook #'origami-mode))
 
 (use-package rainbow-delimiters)
 
@@ -108,10 +109,11 @@
 (use-package shell-pop
   :defer t
   :custom
-    (shell-pop-universal-key "C-t")
-    (shell-pop-window-size 30)
-    (shell-pop-window-position "bottom")
-    (shell-pop-term-shell "/bin/zsh"))
+  (shell-pop-universal-key "C-t")
+  (shell-pop-window-size 30)
+  (shell-pop-window-position "bottom")
+  (shell-pop-term-shell "/bin/zsh"))
+
 (setq shell-file-name "/bin/zsh")
 (setq system-uses-terminfo nil)
 
@@ -119,12 +121,12 @@
   :diminish
   :defer 1
   :config (which-key-mode)
-	  (which-key-setup-side-window-bottom)
-	  (setq which-key-idle-delay 0.05))
+	(which-key-setup-side-window-bottom)
+	(setq which-key-idle-delay 0.05))
 
 (use-package diminish
   :defer 5
-    :config
+	:config
 	(diminish  'org-indent-mode))
 
 (use-package magit
@@ -160,35 +162,9 @@
   :config
   (setq evil-collection-company-use-tng nil)
   (evil-collection-init))
-;;(use-package evil-magit)
+(use-package evil-magit)
 
-(load (concat (file-name-directory load-file-name)
-          "functions.el"))
-
-(defun my/evil-yank-advice (orig-fn beg end &rest args)
-    (pulse-momentary-highlight-region beg end)
-    (apply orig-fn beg end args)) 
-(advice-add 'evil-yank :around 'my/evil-yank-advice)
-
-;; Borrowed from Spacemacs
-(defun my/switch-to-scratch-buffer (&optional arg)
-    "Switch to scratch buffer"
-    (interactive "P")
-    (switch-to-buffer (get-buffer-create "*scratch*")))
-
-;; Borrowed from Spacemacs
-;; https://github.com/syl20bnr/spacemacs/blob/77d84b14e057aadc6a71c536104b57c617600f35/core/core-funcs.el#L342
-(defun my/alternate-buffer (&optional window)
-    "Switch back and forth between current and last buffer in the
-     current window."
-     (interactive)
-     (cl-destructuring-bind (buf start pos)
-         (or (cl-find (window-buffer window) (window-prev-buffers)
-                 :key #'car :test-not #'eq)
-         (list (other-buffer) nil nil))
-         (if (not buf)
-             (message "Last buffer not found.")
-             (set-window-buffer-start-and-point window buf start pos))))
+(load (concat (file-name-directory load-file-name) "functions.el"))
 
 (use-package awesome-tab
   :load-path "local/awesome-tab"
@@ -199,13 +175,13 @@
 (require 'general)
 ;; Space
 (general-create-definer my-leader-def
-  :prefix "SPC")
+                        :prefix "SPC")
 ;; Tab
 (general-create-definer my-extra-def
-  :prefix "TAB")
+                        :prefix "TAB")
 ;; Comma
 (general-create-definer my-mode-def
-  :prefix ",")
+                        :prefix ",")
 
 (global-set-key (kbd "C-s") 'save-buffer)
 
@@ -236,54 +212,98 @@
  "z-" 'text-scale-decrese
  )
 
+ ;; clj-refactor
+(my-leader-def
+ :keymaps '(normal visual)
+ "rad" 'cljr-add-declaration
+ "rai" 'cljr-add-import-to-ns
+ "ram" 'cljr-add-missing-libspec
+ "rap" 'cljr-add-project-dependency
+ "rar" 'cljr-add-require-to-ns
+ "ras" 'cljr-add-stubs
+ "rau" 'cljr-add-use-to-ns
+ "rci" 'clojure-cycle-if
+ "rcn" 'cljr-clean-ns
+ "rcp" 'clojure-cycle-privacy
+ "rcs" 'cljr-change-function-signature
+ "rct" 'cljr-cycle-thread
+ "rdk" 'cljr-destructure-keys
+ "rec" 'cljr-extract-constant
+ "red" 'cljr-extract-def
+ "ref" 'cljr-extract-function
+ "rel" 'cljr-expand-let
+ "rfe" 'cljr-create-fn-from-example
+ "rfu" 'cljr-find-usages
+ "rhd" 'cljr-hotload-dependency
+ "ril" 'cljr-introduce-let
+ "ris" 'cljr-inline-symbol
+ "rmf" 'cljr-move-form
+ "rml" 'cljr-move-to-let
+ "rpc" 'cljr-project-clean
+ "rpf" 'cljr-promote-function
+ "rrf" 'cljr-rename-file-or-dir
+ "rrl" 'cljr-remove-let
+ "rrm" 'cljr-require-macro
+ "rrs" 'cljr-rename-symbol
+ "rsc" 'cljr-show-changelog
+ "rsp" 'cljr-sort-project-dependencies
+ "rsr" 'cljr-stop-referring
+ "rtf" 'clojure-thread-first-all
+ "rth" 'clojure-thread
+ "rtl" 'clojure-thread-last-all
+ "rua" 'clojure-unwind-all
+ "rup" 'cljr-update-project-dependencies
+ "ruw" 'clojure-unwind
+)
+
 ;; Top
 (my-leader-def
-  :keymaps '(normal visual)
-  "TAB" 'my/alternate-buffer
-  "SPC" 'helm-M-x
-  "1" 'winum-select-window-1
-  "2" 'winum-select-window-2
-  "3" 'winum-select-window-3
-  "4" 'winum-select-window-4
-  "5" 'winum-select-window-5
-  "6" 'winum-select-window-6
-  "7" 'winum-select-window-7
-  "8" 'winum-select-window-8
-  "9" 'winum-select-window-9
-  "0" 'treemacs-select-window
-  "$" 'shelldon-hist
-  "!" 'shelldon
-  "^" 'lispy-beginning-of-defun
-  "=" 'lispy-tab
-  ";" 'evil-commentary
-  "c" 'lispy-clone
-  "C" 'lispy-convolute
-  "b" 'lispy-forward-barf-sexp
-  "B" 'lispy-backward-barf-sexp
-  "h" 'lispy-move-right
-  "H" 'lispy-move-left
-  "j" 'lispy-move-down
-  "J" 'lispy-move-up
-  "k" 'lispy-down-slurp
-  "K" 'lispy-up-slurp
-  "o" 'lispy-parens-down
-  "s" 'lispy-forward-slurp-sexp
-  "S" 'lispy-backward-slurp-sexp
-  "t" 'sp-transpose-sexp
-  "u" 'lispy-raise-some
-  "w" 'paredit-wrap-round
-  "W" 'paredit-splice-sexp
-  "x" 'sp-kill-sexp
-  "y" 'lispy-new-copy
-  )
+ :keymaps '(normal visual)
+ "TAB" 'my/alternate-buffer
+ "SPC" 'helm-M-x
+ "1" 'winum-select-window-1
+ "2" 'winum-select-window-2
+ "3" 'winum-select-window-3
+ "4" 'winum-select-window-4
+ "5" 'winum-select-window-5
+ "6" 'winum-select-window-6
+ "7" 'winum-select-window-7
+ "8" 'winum-select-window-8
+ "9" 'winum-select-window-9
+ "0" 'treemacs-select-window
+ "$" 'shelldon-hist
+ "!" 'shelldon
+ "^" 'lispy-beginning-of-defun
+ "=" 'lispy-tab
+ ";" 'evil-commentary
+ "c" 'lispy-clone
+ "C" 'lispy-convolute
+ "b" 'lispy-forward-barf-sexp
+ "B" 'lispy-backward-barf-sexp
+ "h" 'lispy-move-right
+ "H" 'lispy-move-left
+ "j" 'lispy-move-down
+ "J" 'lispy-move-up
+ "k" 'lispy-down-slurp
+ "K" 'lispy-up-slurp
+ "o" 'lispy-parens-down
+ "s" 'lispy-forward-slurp-sexp
+ "S" 'lispy-backward-slurp-sexp
+ "t" 'sp-transpose-sexp
+ "u" 'lispy-raise-some
+ "w" 'paredit-wrap-round
+ "W" 'paredit-splice-sexp
+ "x" 'sp-kill-sexp
+ "y" 'lispy-new-copy
+ )
 
 ;; Normal mode remap
 (evil-define-key nil evil-normal-state-map
- "B" 'lispy-forward-barf-sexp
- "C" 'lispy-backward-barf-sexp
- "s" 'lispy-forward-slurp-sexp
- "S" 'lispy-backward-slurp-sexp
- "Y" 'lispy-new-copy)
+  "B" 'lispy-forward-barf-sexp
+  "C" 'lispy-backward-barf-sexp
+  "s" 'lispy-forward-slurp-sexp
+  "S" 'lispy-backward-slurp-sexp
+  "Y" 'lispy-new-copy)
 
 ;; Clojure
 (my-mode-def
@@ -340,7 +360,7 @@
     ;; The default width and height of the icons is 22 pixels. If you are
     ;; using a Hi-DPI display, uncomment this to double the icon size.
     ;;(treemacs-resize-icons 44)
-
+    
     (treemacs-follow-mode t)
     (treemacs-filewatch-mode t)
     (treemacs-fringe-indicator-mode 'always)
@@ -359,14 +379,14 @@
   :after treemacs projectile
   :ensure t)
 
- (use-package treemacs-icons-dired
-   :after treemacs dired
-   :ensure t
-   :config (treemacs-icons-dired-mode))
+(use-package treemacs-icons-dired
+  :after treemacs dired
+  :ensure t
+  :config (treemacs-icons-dired-mode))
 
- (use-package treemacs-magit
-   :after treemacs magit
-   :ensure t)
+(use-package treemacs-magit
+  :after treemacs magit
+  :ensure t)
 
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 (treemacs)

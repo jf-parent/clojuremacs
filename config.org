@@ -90,6 +90,8 @@
   :ensure t)
 ;; Smartparens
 (use-package smartparens)
+(use-package clj-refactor
+ :init (clj-refactor-mode 1) (yas-minor-mode 1))
 #+END_SRC
 * All the icons
 #+BEGIN_SRC emacs-lisp
@@ -267,6 +269,50 @@
  "z+" 'text-scale-increase
  "z-" 'text-scale-decrese
  )
+
+ ;; clj-refactor
+(my-leader-def
+ :keymaps '(normal visual)
+ "rad" 'cljr-add-declaration
+ "rai" 'cljr-add-import-to-ns
+ "ram" 'cljr-add-missing-libspec
+ "rap" 'cljr-add-project-dependency
+ "rar" 'cljr-add-require-to-ns
+ "ras" 'cljr-add-stubs
+ "rau" 'cljr-add-use-to-ns
+ "rci" 'clojure-cycle-if
+ "rcn" 'cljr-clean-ns
+ "rcp" 'clojure-cycle-privacy
+ "rcs" 'cljr-change-function-signature
+ "rct" 'cljr-cycle-thread
+ "rdk" 'cljr-destructure-keys
+ "rec" 'cljr-extract-constant
+ "red" 'cljr-extract-def
+ "ref" 'cljr-extract-function
+ "rel" 'cljr-expand-let
+ "rfe" 'cljr-create-fn-from-example
+ "rfu" 'cljr-find-usages
+ "rhd" 'cljr-hotload-dependency
+ "ril" 'cljr-introduce-let
+ "ris" 'cljr-inline-symbol
+ "rmf" 'cljr-move-form
+ "rml" 'cljr-move-to-let
+ "rpc" 'cljr-project-clean
+ "rpf" 'cljr-promote-function
+ "rrf" 'cljr-rename-file-or-dir
+ "rrl" 'cljr-remove-let
+ "rrm" 'cljr-require-macro
+ "rrs" 'cljr-rename-symbol
+ "rsc" 'cljr-show-changelog
+ "rsp" 'cljr-sort-project-dependencies
+ "rsr" 'cljr-stop-referring
+ "rtf" 'clojure-thread-first-all
+ "rth" 'clojure-thread
+ "rtl" 'clojure-thread-last-all
+ "rua" 'clojure-unwind-all
+ "rup" 'cljr-update-project-dependencies
+ "ruw" 'clojure-unwind
+)
 
 ;; Top
 (my-leader-def
