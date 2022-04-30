@@ -154,6 +154,7 @@
 (use-package evil
   :init
   (setq evil-want-keybinding nil)
+  (setq evil-undo-system 'undo-tree)
   :config
   (evil-mode 1))
 (use-package evil-commentary)
@@ -162,7 +163,7 @@
   :config
   (setq evil-collection-company-use-tng nil)
   (evil-collection-init))
-(use-package evil-magit)
+;;(use-package evil-magit)
 
 (load (concat (file-name-directory load-file-name) "functions.el"))
 
